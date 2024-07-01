@@ -1,0 +1,159 @@
+local TweenService = game:GetService("TweenService")
+local GameScriptGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("ImageLabel")
+local fovval = Instance.new("IntValue")
+fovval.Parent = game.workspace
+GameScriptGui.Name = "GameScriptGui"
+GameScriptGui.Parent = game.CoreGui
+local softNAME = Instance.new("TextLabel")
+softNAME.Parent = GameScriptGui
+softNAME.Position = UDim2.new(0.5, 0, 0.6, 0)
+softNAME.Visible = false
+softNAME.ZIndex = 3
+softNAME.Text = "MOTOKOLA"
+softNAME.TextSize = 30
+softNAME.TextColor = BrickColor.new("White")
+softNAME.BackgroundTransparency = 1
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = GameScriptGui
+MainFrame.Image = "rbxassetid://12880539722"
+MainFrame.Active = true
+MainFrame.Draggable = false
+MainFrame.Position = UDim2.new(0.5, 0, -0.30, 0)
+MainFrame.Size = UDim2.new(0, 564, 0, 304)
+MainFrame.BackgroundTransparency = 1
+MainFrame.ImageTransparency = 0
+
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+local targetRotation = 1440
+local targetPosition = UDim2.new(0.5, 0, 0.5, 0)
+
+local tweenInfo = TweenInfo.new(5)
+
+local tween = TweenService:Create(MainFrame, tweenInfo, {Rotation = targetRotation,Position = targetPosition} )
+
+local function onTweenCompleted()
+softNAME.Visible = true
+wait(5)
+GameScriptGui:Remove()
+end
+
+tween.Completed:Connect(onTweenCompleted)
+
+tween:Play()
+
+wait(10)
+---INTRO
+
+
+local library = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ShaddowScripts/Main/main/Library"))()
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Main = library:CreateWindow("MOTOKOLA","Blood")
+local Lighting = game:GetService("Lighting")
+local tab = Main:CreateTab("Visual")
+local tab2 = Main:CreateTab("Combat")
+local Circle = Drawing.new("Circle")
+Circle.Thickness = 1
+Circle.Radius = 2
+Circle.Color = Color3.fromRGB(238,59,59)
+
+tab:CreateButton("Player ESP",function()
+while wait(5) do
+    for i, childrik in ipairs(workspace:GetDescendants()) do
+        if childrik:FindFirstChild("HumanoidRootPart") then
+            if not childrik:FindFirstChild("EspBox") then
+                if childrik ~= game.Players.LocalPlayer.Character then
+                    if childrik ~= game.workspace.Ignore.FPSArms then
+                    local esp = Instance.new("Highlight",childrik)
+                    esp.Adornee = childrik
+                    esp.Name = "EspBox"
+                end
+            end
+            end
+        end
+    end
+end
+end)
+
+tab:CreateButton("Totem ESP",function()
+while wait(15) do
+    for i, childrik in ipairs(workspace:GetDescendants()) do
+        if childrik:FindFirstChild("State") then
+            if not childrik:FindFirstChild("EspBox") then
+                if childrik ~= game.Players.LocalPlayer.Character then
+                    if childrik ~= game.workspace.Ignore.FPSArms then
+                    local esp = Instance.new("Highlight",childrik)
+                    esp.Adornee = childrik
+                    esp.Name = "EspBox"
+                end
+            end
+            end
+        end
+    end
+end
+end)
+
+tab:CreateButton("Clear Fog",function()
+Lighting.FogStart = 120000
+end)
+
+tab:CreateSlider("Wow",-120,120,function(a)
+fovval.Value = a
+end)
+
+tab:CreateButton("CHANGE FOV",function()
+local varsglobal = {
+    visuals = {
+        FovChanger = true, 
+        FovAdd = fovval.Value,
+        OldFov = workspace.CurrentCamera.FieldOfView,
+        ZoomAmt = 0,
+        FovZoom = false,
+    },
+}
+
+local function updateFOV()
+    if varsglobal.visuals.FovChanger then
+        workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov + varsglobal.visuals.FovAdd
+    else
+        workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov
+    end
+end
+game:GetService("RunService").RenderStepped:Connect(updateFOV)
+end)
+
+
+tab2:CreateButton("TriggerBot",function()
+ local player = game:GetService("Players").LocalPlayer
+local mouse = player:GetMouse()
+game:GetService("RunService").RenderStepped:Connect(function()
+			if mouse.Target.Parent:FindFirstChild("Torso") or mouse.Target.Parent:FindFirstChild("Head") then
+				mouse1press() wait() mouse1release()
+			end
+end)
+end)
+
+tab2:CreateButton("Hitbox Expander",function()
+while wait(5) do
+    for i, childrik in ipairs(workspace:GetDescendants()) do
+        if childrik:FindFirstChild("Head") then
+                    if childrik ~= game.workspace.Ignore.FPSArms then
+                    childrik:FindFirstChild("Head").Size = Vector3.new(10,10,10)
+                    childrik:FindFirstChild("Head").Transparency = 0.5
+                    childrik:FindFirstChild("Head").CanCollide = false
+                end
+            end
+            end
+        end
+end)
+
+
+tab:Show()
+
+
+RunService.RenderStepped:Connect(function()
+ Circle.Position = UserInputService:GetMouseLocation()
+end)
+
+
