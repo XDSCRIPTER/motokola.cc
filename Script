@@ -1,159 +1,306 @@
-local TweenService = game:GetService("TweenService")
-local GameScriptGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("ImageLabel")
-local fovval = Instance.new("IntValue")
-fovval.Parent = game.workspace
-GameScriptGui.Name = "GameScriptGui"
-GameScriptGui.Parent = game.CoreGui
-local softNAME = Instance.new("TextLabel")
-softNAME.Parent = GameScriptGui
-softNAME.Position = UDim2.new(0.5, 0, 0.6, 0)
-softNAME.Visible = false
-softNAME.ZIndex = 3
-softNAME.Text = "MOTOKOLA"
-softNAME.TextSize = 30
-softNAME.TextColor = BrickColor.new("White")
-softNAME.BackgroundTransparency = 1
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = GameScriptGui
-MainFrame.Image = "rbxassetid://12880539722"
-MainFrame.Active = true
-MainFrame.Draggable = false
-MainFrame.Position = UDim2.new(0.5, 0, -0.30, 0)
-MainFrame.Size = UDim2.new(0, 564, 0, 304)
-MainFrame.BackgroundTransparency = 1
-MainFrame.ImageTransparency = 0
+local Decimals = 4
+local Clock = os.clock()
+local ValueText = "Value Is Now :"
 
-MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-local targetRotation = 1440
-local targetPosition = UDim2.new(0.5, 0, 0.5, 0)
+local boxespclr = Instance.new("Color3Value")
+local boxesptrs = Instance.new("IntValue")
+local hitboxtr =Instance.new("NumberValue")
+hitboxtr.Value = 0
 
-local tweenInfo = TweenInfo.new(5)
+local chamstrs =  Instance.new("NumberValue")
+local chamstrsFILL =  Instance.new("NumberValue")
+chamstrsFILL.Value = 1
+chamstrs.Value = 1
 
-local tween = TweenService:Create(MainFrame, tweenInfo, {Rotation = targetRotation,Position = targetPosition} )
+local longneckVAL =  Instance.new("NumberValue")
+longneckVAL.Value = 0
+local HitboxSIZE = Instance.new("Vector3Value")
+HitboxSIZE.Parent = workspace
+HitboxSIZE.Name = "HitboxSIZE.X"
 
-local function onTweenCompleted()
-softNAME.Visible = true
-wait(5)
-GameScriptGui:Remove()
+boxesptrs.Value = 0
+local key = game:GetService("UserInputService")
+
+
+--
+local BoxESP = {}
+function BoxESP.Create(Player)
+    local Box = Drawing.new("Square")
+    Box.Visible = false
+    Box.Color = boxespclr.Value
+    Box.Filled = false
+    Box.Transparency = 1
+    Box.Thickness = 1
+
+    local Updater
+
+    local function UpdateBox()
+        if Player and Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head") then
+            local Target2dPosition, IsVisible = workspace.CurrentCamera:WorldToViewportPoint(Player.HumanoidRootPart.Position)
+            local scale_factor = 1 / (Target2dPosition.Z * math.tan(math.rad(workspace.CurrentCamera.FieldOfView * 0.5)) * 2) * 100
+            local width, height = math.floor(40 * scale_factor), math.floor(62 * scale_factor)
+            Box.Color = boxespclr.Value
+            Box.Visible = IsVisible
+            Box.Transparency = boxesptrs.Value
+            Box.Size = Vector2.new(width, height)
+            Box.Position = Vector2.new(Target2dPosition.X - Box.Size.X / 2, Target2dPosition.Y - Box.Size.Y / 2)
+        else
+            Box.Visible = false
+            if not Player then
+                Box:Remove()
+                Updater:Disconnect()
+            end
+        end
+    end
+
+Updater = game:GetService("RunService").RenderStepped:Connect(UpdateBox)
+
+    return Box
 end
 
-tween.Completed:Connect(onTweenCompleted)
-
-tween:Play()
-
-wait(10)
----INTRO
 
 
-local library = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/ShaddowScripts/Main/main/Library"))()
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Main = library:CreateWindow("MOTOKOLA","Blood")
-local Lighting = game:GetService("Lighting")
-local tab = Main:CreateTab("Visual")
-local tab2 = Main:CreateTab("Combat")
-local Circle = Drawing.new("Circle")
-Circle.Thickness = 1
-Circle.Radius = 2
-Circle.Color = Color3.fromRGB(238,59,59)
+local Boxes = {}
 
-tab:CreateButton("Player ESP",function()
-while wait(5) do
-    for i, childrik in ipairs(workspace:GetDescendants()) do
-        if childrik:FindFirstChild("HumanoidRootPart") then
-            if not childrik:FindFirstChild("EspBox") then
-                if childrik ~= game.Players.LocalPlayer.Character then
-                    if childrik ~= game.workspace.Ignore.FPSArms then
-                    local esp = Instance.new("Highlight",childrik)
-                    esp.Adornee = childrik
-                    esp.Name = "EspBox"
-                end
-            end
+local function EnableBoxESP()
+    for _, Player in pairs(game:GetService("Workspace"):GetChildren()) do
+        if Player:IsA("Model") and Player:FindFirstChild("HumanoidRootPart") and Player:FindFirstChild("Head") then
+            local Box = BoxESP.Create(Player)
+            table.insert(Boxes, Box)
+        end
+    end
+end
+
+game.Workspace.DescendantAdded:Connect(function(i)
+    if i:IsA("Model") and i:FindFirstChild("HumanoidRootPart") and i:FindFirstChild("Head") then
+        local Box = BoxESP.Create(i)
+        table.insert(Boxes, Box)
+    end
+end)
+
+EnableBoxESP()
+
+
+
+
+
+
+
+--
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/drillygzzly/Roblox-UI-Libs/main/1%20Tokyo%20Lib%20(FIXED)/Tokyo%20Lib%20Source.lua"))({
+    cheatname = "Title Here", -- watermark text
+    gamename = "Title Here", -- watermark text
+})
+
+library:init()
+
+local Window1  = library.NewWindow({
+    title = "Wagner | солдаты сука удачи", -- Mainwindow Text
+    size = UDim2.new(0, 510, 0.6, 6
+)})
+
+local Tab1 = Window1:AddTab("  Combat  ")
+local Tab2 = Window1:AddTab("  Visual  ")
+local SettingsTab = library:CreateSettingsTab(Window1)
+
+--Tab1:SetText("Text")
+
+
+
+local Section1 = Tab1:AddSection("Hitboxes", 1)
+local Section2 = Tab1:AddSection("Long Neck", 1)
+local Section3 = Tab2:AddSection("Esp", 1)
+--Section1:SetText("Text")
+
+
+Section2:AddBind({
+    enabled = true,
+    text = "Long neck",
+    tooltip = "Bind long neck",
+    mode = "toggle",
+    bind = "None",
+    flag = "ToggleKey_1",
+    state = false,
+    nomouse = false,
+    risky = false,
+    noindicator = false,
+    callback = function(v)
+     game.workspace.Ignore.LocalCharacter.Top.CrouchForce.LimitsEnabled = true
+     game.workspace.Ignore.LocalCharacter.Top.CrouchForce.MinLength = longneckVAL.Value
+     if v == false then 
+     game.workspace.Ignore.LocalCharacter.Top.CrouchForce.LimitsEnabled = false
+     game.workspace.Ignore.LocalCharacter.Top.CrouchForce.MinLength = 3
+     end
+    end,
+    keycallback = function(v)
+  
+    end
+})
+
+
+Section3:AddToggle({
+    text = "EspBox",
+    flag = "Toggle_1",
+    callback = function(v)
+        if v == true then
+        boxesptrs.Value = 1
+        end
+
+        if v == false then
+        boxesptrs.Value = 0
+        end
+    end
+})
+
+Section3:AddToggle({
+    text = "Chams",
+    flag = "Toggle_1",
+    callback = function(v)
+        if v == true then
+        chamstrsFILL.Value = 0
+        chamstrs.Value = 0
+        while wait() do
+        for v, i in pairs(workspace:GetChildren()) do
+            if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("ROFLS") then
+               local s = Instance.new("Highlight")
+               s.Name = "ROFLS"
+               s.Parent = i
+          
+
             end
         end
     end
 end
-end)
 
-tab:CreateButton("Totem ESP",function()
-while wait(15) do
-    for i, childrik in ipairs(workspace:GetDescendants()) do
-        if childrik:FindFirstChild("State") then
-            if not childrik:FindFirstChild("EspBox") then
-                if childrik ~= game.Players.LocalPlayer.Character then
-                    if childrik ~= game.workspace.Ignore.FPSArms then
-                    local esp = Instance.new("Highlight",childrik)
-                    esp.Adornee = childrik
-                    esp.Name = "EspBox"
-                end
-            end
+while wait() do 
+     s.FillTransparency = chamstrsFILL.Value 
+    s.OutlineTransparency = chamstrs.Value 
+end
+
+
+        if v == false then
+        chamstrsFILL.Value = 1
+        chamstrs.Value = 1
+        end
+    end
+})
+
+Section1:AddSeparator({
+    enabled = true,
+    text = "HItboxes"
+})
+
+Section1:AddButton({
+    enabled = true,
+    text = "Hitboxes",
+    tooltip = "Make Head Hitboxes much higger",
+    confirm = true,
+    risky = false,
+    callback = function()
+        local SelectPart = "Head"
+
+local HBTrans = 0.5
+
+local PurpleColor = BrickColor.new("Bright violet")
+
+local hitboxlist = {}
+
+task.spawn(function ()
+    while wait() do
+        for v, i in pairs(workspace:GetChildren()) do
+            if i:FindFirstChild("HumanoidRootPart") and not i:FindFirstChild("Fake") then
+               i.Head.Size = Vector3.new(HitboxSIZE.Value.X,HitboxSIZE.Value.Y,HitboxSIZE.Value.Z)
+               i.Head.CanCollide = false
+               i.Head.Transparency = hitboxtr.Value 
             end
         end
     end
-end
 end)
-
-tab:CreateButton("Clear Fog",function()
-Lighting.FogStart = 120000
-end)
-
-tab:CreateSlider("Wow",-120,120,function(a)
-fovval.Value = a
-end)
-
-tab:CreateButton("CHANGE FOV",function()
-local varsglobal = {
-    visuals = {
-        FovChanger = true, 
-        FovAdd = fovval.Value,
-        OldFov = workspace.CurrentCamera.FieldOfView,
-        ZoomAmt = 0,
-        FovZoom = false,
-    },
-}
-
-local function updateFOV()
-    if varsglobal.visuals.FovChanger then
-        workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov + varsglobal.visuals.FovAdd
-    else
-        workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov
     end
-end
-game:GetService("RunService").RenderStepped:Connect(updateFOV)
-end)
+})
 
 
-tab2:CreateButton("TriggerBot",function()
- local player = game:GetService("Players").LocalPlayer
-local mouse = player:GetMouse()
-game:GetService("RunService").RenderStepped:Connect(function()
-			if mouse.Target.Parent:FindFirstChild("Torso") or mouse.Target.Parent:FindFirstChild("Head") then
-				mouse1press() wait() mouse1release()
-			end
-end)
-end)
-
-tab2:CreateButton("Hitbox Expander",function()
-while wait(5) do
-    for i, childrik in ipairs(workspace:GetDescendants()) do
-        if childrik:FindFirstChild("Head") then
-                    if childrik ~= game.workspace.Ignore.FPSArms then
-                    childrik:FindFirstChild("Head").Size = Vector3.new(10,10,10)
-                    childrik:FindFirstChild("Head").Transparency = 0.5
-                    childrik:FindFirstChild("Head").CanCollide = false
-                end
-            end
-            end
-        end
-end)
 
 
-tab:Show()
+-- Button1:SetText("Text")
+
+Section1:AddSlider({
+    enabled = true,
+    text = "Hitboxes size",
+    tooltip = "select hitbox size",
+    flag = "Slider_1",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 0,
+    max = 11.5,
+    increment = 0.1,
+    risky = false,
+    callback = function(v)
+        HitboxSIZE.Value = Vector3.new(v,v,v)
+    end
+})
+
+Section1:AddSlider({
+    enabled = true,
+    text = "Hitboxes Transparency",
+    tooltip = "select hitbox Hitboxes Transparency",
+    flag = "Slider_1",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 0,
+    max = 1,
+    increment = 0.1,
+    risky = false,
+    callback = function(v)
+        hitboxtr.Value  = v
+    end
+})
+
+Section2:AddSlider({
+    enabled = true,
+    text = "Long neck",
+    tooltip = "select long neck Value",
+    flag = "Slider_1",
+    suffix = "",
+    dragging = true,
+    focused = false,
+    min = 3,
+    max = 15,
+    increment = 0.1,
+    risky = false,
+    callback = function(v)
+        longneckVAL.Value = v
+    end
+})
+--Slider_1:SetValue(100)
 
 
-RunService.RenderStepped:Connect(function()
- Circle.Position = UserInputService:GetMouseLocation()
-end)
 
+Section3:AddColor({
+    enabled = true,
+    text = "Box esp color",
+    tooltip = "tooltip1",
+    color = Color3.fromRGB(255, 255, 255),
+    flag = "Color_1",
+    trans = 0,
+    open = false,
+    risky = false,
+    callback = function(v)
+        boxespclr.Value = v
+    end
+})
 
+local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
+library:SendNotification(("Loaded In "..tostring(Time)), 6)
+
+--[[
+    --Window1:SetOpen(false)
+    makefolder("Title Here")
+    library:SetTheme(Default)
+    library:GetConfig(Default)
+    library:LoadConfig(Default)
+    library:SaveConfig(Default)
+]]
